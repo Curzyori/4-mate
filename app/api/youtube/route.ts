@@ -33,20 +33,22 @@ export async function POST(request: NextRequest) {
     const isAudioOnly = format === "mp3";
     const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
-    // Step 1: Analyze the video
-    const analyzeUrl = "https://www.y2mate.com/mates/en/analyze/ajax";
+    // Step 1: Analyze the video using V2 endpoint
+    const analyzeUrl = "https://www.y2mate.com/mates/analyzeV2/ajax";
     const analyzeRes = await axios.post(
       analyzeUrl,
       new URLSearchParams({
-        url: videoUrl,
+        hl: "en",
+        k_page: "home",
+        k_query: videoUrl,
         q_auto: "1",
-        ajax: "1",
       }).toString(),
       { headers: HEADERS }
     );
 
     if (!analyzeRes.data || analyzeRes.data.status !== "success") {
-      throw new Error("Y2Mate analysis failed");
+      console.error("Y2Mate Analysis Failed Response:", analyzeRes.data);
+      throw new Error("Y2Mate analysis failed. The service might be blocking the request.");
     }
 
     const $ = cheerio.load(analyzeRes.data.result);
@@ -55,12 +57,12 @@ export async function POST(request: NextRequest) {
     let kValue = "";
     
     // Step 2: Extract conversion keys from the HTML
+    // Y2Mate V2 result HTML structure check
     if (isAudioOnly) {
       // Find the best MP3 key
-      // Usually there is a button with data-ftype="mp3"
-      const mp3Btn = $('button[data-ftype="mp3"]').first();
+      // Usually there is a button with data-ftype="mp3" or an <a> with those attributes
+      const mp3Btn = $('button[data-ftype="mp3"], a[data-ftype="mp3"]').first();
       if (mp3Btn.length) {
-        // The k value is in the onclick attribute: analyze_res('v_id', 'k_value')
         const onclick = mp3Btn.attr("onclick") || "";
         const matches = onclick.match(/'([^']+)'/g);
         if (matches && matches.length >= 2) {
@@ -69,7 +71,7 @@ export async function POST(request: NextRequest) {
       }
     } else {
       // Find the MP4 key for the specific quality
-      $(`button[data-ftype="mp4"]`).each((_, el) => {
+      $(`button[data-ftype="mp4"], a[data-ftype="mp4"]`).each((_, el) => {
         const qAttr = $(el).attr("data-fquality") || "";
         if (qAttr === quality) {
           const onclick = $(el).attr("onclick") || "";
@@ -83,7 +85,7 @@ export async function POST(request: NextRequest) {
 
       // Fallback to first available MP4 if requested quality not found
       if (!kValue) {
-        $(`button[data-ftype="mp4"]`).each((_, el) => {
+        $(`button[data-ftype="mp4"], a[data-ftype="mp4"]`).each((_, el) => {
           const onclick = $(el).attr("onclick") || "";
           const matches = onclick.match(/'([^']+)'/g);
           if (matches && matches.length >= 2) {
@@ -95,6 +97,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!kValue) {
+      console.log("HTML Result Snippet:", analyzeRes.data.result);
       throw new Error("Could not find conversion key for the requested format/quality");
     }
 
@@ -110,6 +113,7 @@ export async function POST(request: NextRequest) {
     );
 
     if (!convertRes.data || convertRes.data.status !== "ok") {
+      console.error("Y2Mate Conversion Failed Response:", convertRes.data);
       throw new Error("Y2Mate conversion failed");
     }
 
@@ -119,14 +123,12 @@ export async function POST(request: NextRequest) {
       filename: title,
       platform: "youtube",
       format: isAudioOnly ? "mp3" : "mp4",
-      quality: isAudioOnly ? "128" : quality, // Y2mate mp3 is usually 128
+      quality: isAudioOnly ? "128" : quality,
     });
 
   } catch (error: unknown) {
     console.error("YouTube Scraping Error:", error);
     const message = error instanceof Error ? error.message : "Scraping failed";
-    
-    // Fallback logic could go here if needed
     
     return Response.json(
       { error: "Failed to process YouTube request", details: message },
