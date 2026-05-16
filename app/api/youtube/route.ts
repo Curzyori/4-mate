@@ -1,17 +1,7 @@
 import { NextRequest } from "next/server";
-import axios from "axios";
-import * as cheerio from "cheerio";
-
+import ytdl from "@distube/ytdl-core";
 
 export const dynamic = "force-dynamic";
-
-// Standard headers to avoid blocking
-const HEADERS = {
-  "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-  "Referer": "https://www.y2mate.com/",
-  "X-Requested-With": "XMLHttpRequest",
-};
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,116 +12,76 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: "YouTube URL is required" }, { status: 400 });
     }
 
-    // Normalize URL and Extract video ID
-    const idMatch = url.match(/(?:v=|shorts\/|youtu\.be\/|embed\/|v\/|watch\?v=)([^#\&\?]{11})/);
-    const videoId = idMatch ? idMatch[1] : null;
-
-    if (!videoId) {
+    // Validate YouTube URL
+    if (!ytdl.validateURL(url)) {
       return Response.json({ error: "Invalid YouTube URL" }, { status: 400 });
     }
 
+    // Step 1: Fetch Video Info
+    const info = await ytdl.getInfo(url);
+    const title = info.videoDetails.title || "YouTube Download";
+    const videoId = info.videoDetails.videoId;
+
     const isAudioOnly = format === "mp3";
-    const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    let downloadUrl = "";
+    let selectedQuality = "";
 
-    // Step 1: Analyze the video using V2 endpoint
-    const analyzeUrl = "https://www.y2mate.com/mates/analyzeV2/ajax";
-    const analyzeRes = await axios.post(
-      analyzeUrl,
-      new URLSearchParams({
-        hl: "en",
-        k_page: "home",
-        k_query: videoUrl,
-        q_auto: "1",
-      }).toString(),
-      { headers: HEADERS }
-    );
-
-    if (!analyzeRes.data || analyzeRes.data.status !== "success") {
-      console.error("Y2Mate Analysis Failed Response:", analyzeRes.data);
-      throw new Error("Y2Mate analysis failed. The service might be blocking the request.");
-    }
-
-    const $ = cheerio.load(analyzeRes.data.result);
-    const title = $("b").first().text() || "YouTube Download";
-    
-    let kValue = "";
-    
-    // Step 2: Extract conversion keys from the HTML
-    // Y2Mate V2 result HTML structure check
+    // Step 2: Choose Format
     if (isAudioOnly) {
-      // Find the best MP3 key
-      // Usually there is a button with data-ftype="mp3" or an <a> with those attributes
-      const mp3Btn = $('button[data-ftype="mp3"], a[data-ftype="mp3"]').first();
-      if (mp3Btn.length) {
-        const onclick = mp3Btn.attr("onclick") || "";
-        const matches = onclick.match(/'([^']+)'/g);
-        if (matches && matches.length >= 2) {
-          kValue = matches[1].replace(/'/g, "");
-        }
-      }
-    } else {
-      // Find the MP4 key for the specific quality
-      $(`button[data-ftype="mp4"], a[data-ftype="mp4"]`).each((_, el) => {
-        const qAttr = $(el).attr("data-fquality") || "";
-        if (qAttr === quality) {
-          const onclick = $(el).attr("onclick") || "";
-          const matches = onclick.match(/'([^']+)'/g);
-          if (matches && matches.length >= 2) {
-            kValue = matches[1].replace(/'/g, "");
-            return false;
-          }
-        }
+      // Find the best audio format
+      const audioFormat = ytdl.chooseFormat(info.formats, { 
+        quality: 'highestaudio',
+        filter: 'audioonly'
       });
-
-      // Fallback to first available MP4 if requested quality not found
-      if (!kValue) {
-        $(`button[data-ftype="mp4"], a[data-ftype="mp4"]`).each((_, el) => {
-          const onclick = $(el).attr("onclick") || "";
-          const matches = onclick.match(/'([^']+)'/g);
-          if (matches && matches.length >= 2) {
-            kValue = matches[1].replace(/'/g, "");
-            return false;
-          }
+      downloadUrl = audioFormat.url;
+      selectedQuality = audioFormat.audioBitrate?.toString() || "128";
+    } else {
+      // Find the best video+audio format (usually 360p or 720p if available as combined)
+      // If combined 720p is not available, ytdl.chooseFormat will try to find the best alternative
+      try {
+        const videoFormat = ytdl.chooseFormat(info.formats, {
+          quality: quality === "1080" ? "highestvideo" : (quality === "720" ? "highestvideo" : "highestvideo"),
+          filter: (f) => f.hasVideo && f.hasAudio && (f.container === "mp4")
         });
+        downloadUrl = videoFormat.url;
+        selectedQuality = videoFormat.qualityLabel || quality;
+      } catch (e) {
+        // Fallback to any combined format if MP4 not found
+        const fallbackFormat = ytdl.chooseFormat(info.formats, {
+          quality: 'highest',
+          filter: 'audioandvideo'
+        });
+        downloadUrl = fallbackFormat.url;
+        selectedQuality = fallbackFormat.qualityLabel || "360p";
       }
     }
 
-    if (!kValue) {
-      console.log("HTML Result Snippet:", analyzeRes.data.result);
-      throw new Error("Could not find conversion key for the requested format/quality");
-    }
-
-    // Step 3: Convert the video
-    const convertUrl = "https://www.y2mate.com/mates/convertV2/index";
-    const convertRes = await axios.post(
-      convertUrl,
-      new URLSearchParams({
-        vid: videoId,
-        k: kValue,
-      }).toString(),
-      { headers: HEADERS }
-    );
-
-    if (!convertRes.data || convertRes.data.status !== "ok") {
-      console.error("Y2Mate Conversion Failed Response:", convertRes.data);
-      throw new Error("Y2Mate conversion failed");
+    if (!downloadUrl) {
+      throw new Error("Could not find a suitable download link");
     }
 
     return Response.json({
       success: true,
-      downloadUrl: convertRes.data.dlink,
+      downloadUrl: downloadUrl,
       filename: title,
       platform: "youtube",
       format: isAudioOnly ? "mp3" : "mp4",
-      quality: isAudioOnly ? "128" : quality,
+      quality: selectedQuality,
+      metadata: {
+        title: title,
+        author: info.videoDetails.author.name,
+        thumbnail: info.videoDetails.thumbnails[0]?.url,
+        duration: info.videoDetails.lengthSeconds,
+        views: info.videoDetails.viewCount
+      }
     });
 
   } catch (error: unknown) {
-    console.error("YouTube Scraping Error:", error);
-    const message = error instanceof Error ? error.message : "Scraping failed";
+    console.error("YouTube Download Error:", error);
+    const message = error instanceof Error ? error.message : "Failed to process YouTube request";
     
     return Response.json(
-      { error: "Failed to process YouTube request", details: message },
+      { error: message, details: "Please try again or use a different video" },
       { status: 500 }
     );
   }
