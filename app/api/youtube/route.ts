@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
 import axios from "axios";
 import * as cheerio from "cheerio";
-import qs from "qs";
 
 export const dynamic = "force-dynamic";
 
@@ -37,11 +36,11 @@ export async function POST(request: NextRequest) {
     const analyzeUrl = "https://www.y2mate.com/mates/en/analyze/ajax";
     const analyzeRes = await axios.post(
       analyzeUrl,
-      qs.stringify({
+      new URLSearchParams({
         url: videoUrl,
         q_auto: "1",
         ajax: "1",
-      }),
+      }).toString(),
       { headers: HEADERS }
     );
 
@@ -102,10 +101,10 @@ export async function POST(request: NextRequest) {
     const convertUrl = "https://www.y2mate.com/mates/convertV2/index";
     const convertRes = await axios.post(
       convertUrl,
-      qs.stringify({
+      new URLSearchParams({
         vid: videoId,
         k: kValue,
-      }),
+      }).toString(),
       { headers: HEADERS }
     );
 
