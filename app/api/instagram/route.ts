@@ -37,6 +37,8 @@ export async function POST(request: NextRequest) {
           downloadUrl: video.url,
           platform: "instagram",
           format: "mp4",
+          thumbnail: video.thumbnail || video.thumb || "",
+          title: video.title || "Instagram Reel",
         });
       }
     }

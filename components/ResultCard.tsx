@@ -8,7 +8,6 @@ import {
   Video,
   Loader2,
   CheckCircle,
-  ExternalLink,
   ChevronDown,
 } from "lucide-react";
 
