@@ -1,0 +1,218 @@
+@import "tailwindcss";
+
+/* ── Design System: Webflow-Inspired Tokens ── */
+
+@theme {
+  /* Colors */
+  --color-primary: #080808;
+  --color-on-primary: #ffffff;
+  --color-ink: #080808;
+  --color-ink-strong: #222222;
+  --color-body: #363636;
+  --color-body-mid: #5a5a5a;
+  --color-mute: #898989;
+  --color-mute-soft: #ababab;
+  --color-hairline: #d8d8d8;
+  --color-canvas: #ffffff;
+
+  /* Accent Colors */
+  --color-accent-purple: #7a3dff;
+  --color-accent-pink: #ed52cb;
+  --color-accent-blue: #3b89ff;
+  --color-accent-blue-deep: #006acc;
+  --color-accent-orange: #ff6b00;
+  --color-accent-green: #00d722;
+  --color-accent-yellow: #ffae13;
+  --color-accent-red: #ee1d36;
+
+  /* Spacing */
+  --spacing-xxs: 2px;
+  --spacing-xs: 4px;
+
+  /* Border Radius */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-level2: 0 84px 24px rgba(0, 0, 0, 0), 0 54px 22px rgba(0, 0, 0, 0.01),
+    0 30px 18px rgba(0, 0, 0, 0.04), 0 13px 13px rgba(0, 0, 0, 0.08),
+    0 3px 7px rgba(0, 0, 0, 0.09);
+  --shadow-level3: 0 84px 24px rgba(0, 0, 0, 0), 0 54px 22px rgba(0, 0, 0, 0.02),
+    0 30px 18px rgba(0, 0, 0, 0.06), 0 13px 13px rgba(0, 0, 0, 0.1),
+    0 3px 7px rgba(0, 0, 0, 0.12);
+
+  /* Font Family */
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "Inconsolata", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ── Base ── */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01";
+  color: var(--color-body);
+  background-color: var(--color-canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Selection ── */
+::selection {
+  background-color: var(--color-accent-purple);
+  color: var(--color-on-primary);
+}
+
+/* ── Focus Ring ── */
+*:focus-visible {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 2px;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-hairline);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-mute-soft);
+}
+
+/* ── Animations ── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(122, 61, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(122, 61, 255, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-hairline) 25%,
+    var(--color-mute-soft) 50%,
+    var(--color-hairline) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ── Utility Animations with Delay ── */
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+/* ── Platform Colors ── */
+.platform-spotify {
+  --platform-color: #1db954;
+}
+.platform-instagram {
+  --platform-color: #e4405f;
+}
+.platform-tiktok {
+  --platform-color: #080808;
+}
+.platform-youtube {
+  --platform-color: #ff0000;
+}
+
+/* ── Glass Effect ── */
+.glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
