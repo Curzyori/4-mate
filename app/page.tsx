@@ -16,6 +16,7 @@ interface ResultData {
   thumbnail?: string;
   downloadUrl?: string;
   spotifyTrackUrl?: string;
+  originalUrl?: string;
 }
 
 interface DownloadOption {
@@ -178,6 +179,7 @@ export default function Home() {
       platform: "youtube",
       title: data.filename || "YouTube Download",
       downloadUrl: data.downloadUrl,
+      originalUrl: url,
     });
   }
 
@@ -223,7 +225,7 @@ export default function Home() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            url: result.downloadUrl,
+            url: result.originalUrl || result.downloadUrl,
             format,
             quality,
           }),

@@ -42,10 +42,10 @@ export default function ResultCard({
   onReset,
 }: ResultCardProps) {
   const [selectedFormat, setSelectedFormat] = useState(
-    downloadOptions?.[0]?.format || "mp4"
+    platform === "spotify" ? "mp3" : (downloadOptions?.[0]?.format || "mp4")
   );
   const [selectedQuality, setSelectedQuality] = useState(
-    downloadOptions?.[0]?.quality || "720"
+    downloadOptions?.[0]?.quality || (platform === "spotify" ? "320" : "720")
   );
   const [showOptions, setShowOptions] = useState(false);
 
@@ -149,8 +149,8 @@ export default function ResultCard({
               {downloadUrl ? (
                 <a
                   id="download-link"
-                  href={`/api/proxy-download?url=${encodeURIComponent(downloadUrl)}&filename=${encodeURIComponent(`${title || platform}_video.${selectedFormat}`)}`}
-                  download={`${title || platform}_video.${selectedFormat}`}
+                  href={`/api/proxy-download?url=${encodeURIComponent(downloadUrl)}&filename=${encodeURIComponent(`${title || platform}.${selectedFormat}`)}`}
+                  download={`${title || platform}.${selectedFormat}`}
                   className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 text-sm font-medium text-on-primary transition-all hover:opacity-90"
                 >
                   <Download size={16} />

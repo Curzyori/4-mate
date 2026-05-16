@@ -14,31 +14,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate YouTube URL
-    const ytRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|shorts\/)|youtu\.be\/).+$/i;
-    if (!ytRegex.test(url)) {
+    // Extract video ID to normalize the URL
+    let videoId = "";
+    const idMatch = url.match(/(?:v=|shorts\/|youtu\.be\/|embed\/|v\/|watch\?v=)([^#\&\?]{11})/);
+    if (idMatch) {
+      videoId = idMatch[1];
+    } else {
       return Response.json(
-        { error: "Please provide a valid YouTube URL" },
+        { error: "Could not extract video ID from URL" },
         { status: 400 }
       );
     }
 
+    const normalizedUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const y2mate = require('y2mate-dl');
     
     const isAudioOnly = format === "mp3";
     let data;
 
-    if (isAudioOnly) {
-      data = await y2mate.ytmp3(url);
-    } else {
-      if (quality === "1080") {
-        try { data = await y2mate.yt1080(url); } catch { data = await y2mate.yt720(url); }
+    try {
+      if (isAudioOnly) {
+        data = await y2mate.ytmp3(normalizedUrl);
+      } else {
+        if (quality === "1080") {
+          try { data = await y2mate.yt1080(normalizedUrl); } catch { data = await y2mate.yt720(normalizedUrl); }
+        }
+        else if (quality === "720") data = await y2mate.yt720(normalizedUrl);
+        else if (quality === "480") data = await y2mate.yt480(normalizedUrl);
+        else if (quality === "360") data = await y2mate.yt360(normalizedUrl);
+        else data = await y2mate.yt720(normalizedUrl); // Default
       }
-      else if (quality === "720") data = await y2mate.yt720(url);
-      else if (quality === "480") data = await y2mate.yt480(url);
-      else if (quality === "360") data = await y2mate.yt360(url);
-      else data = await y2mate.yt720(url); // Default
+    } catch (err) {
+      console.error("y2mate-dl error:", err);
+      throw new Error("Service unavailable. YouTube might be blocking the request.");
     }
 
     if (data && data.status) {
