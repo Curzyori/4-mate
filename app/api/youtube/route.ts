@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import axios from "axios";
 import * as cheerio from "cheerio";
 
+
 export const dynamic = "force-dynamic";
 
 // Standard headers to avoid blocking
@@ -124,6 +125,8 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     console.error("YouTube Scraping Error:", error);
     const message = error instanceof Error ? error.message : "Scraping failed";
+    
+    // Fallback logic could go here if needed
     
     return Response.json(
       { error: "Failed to process YouTube request", details: message },

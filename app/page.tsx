@@ -136,8 +136,7 @@ export default function Home() {
 
     setResult({
       platform: "instagram",
-      title: data.title || "Instagram Reel",
-      thumbnail: data.thumbnail,
+      title: "Instagram Reel",
       downloadUrl: data.downloadUrl,
     });
   }
