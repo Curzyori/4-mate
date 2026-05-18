@@ -164,6 +164,18 @@ export default function UrlInput({
         </p>
       )}
 
+      {/* YouTube Service Disturbance Warning */}
+      {activePlatform === "youtube" && (
+        <div className="mt-4 rounded-md border border-accent-orange/20 bg-accent-orange/5 p-3.5 text-left animate-slide-down">
+          <div className="flex items-start gap-2.5">
+            <span className="text-accent-orange font-bold text-sm shrink-0">⚠️</span>
+            <p className="text-xs sm:text-sm text-body-mid leading-relaxed">
+              <strong className="text-ink font-semibold">Informasi Layanan YouTube:</strong> Saat ini sedang terjadi gangguan teknis sementara pada downloader YouTube dikarenakan pembatasan sistem pihak ketiga. Beberapa permintaan mungkin akan gagal. Kami sedang mengupayakan perbaikan.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Format info */}
       <p className="mt-3 text-center text-xs text-mute-soft px-2">
         Output: {config.outputFormats.join(" / ")} • Paste a{" "}

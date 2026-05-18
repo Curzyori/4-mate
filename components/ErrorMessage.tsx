@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AlertCircle, X } from "lucide-react";
+import { AlertTriangle, X } from "lucide-react";
 
 interface ErrorMessageProps {
   message: string;
@@ -14,16 +14,16 @@ export default function ErrorMessage({ message, onDismiss }: ErrorMessageProps) 
       id="error-message"
       className="animate-slide-down mx-auto mt-6 w-full max-w-2xl px-6"
     >
-      <div className="flex items-start gap-3 rounded-md border border-accent-red/20 bg-accent-red/5 p-4">
-        <AlertCircle
+      <div className="flex items-start gap-3 rounded-md border border-accent-orange/20 bg-accent-orange/5 p-4">
+        <AlertTriangle
           size={18}
-          className="mt-0.5 shrink-0 text-accent-red"
+          className="mt-0.5 shrink-0 text-accent-orange"
         />
         <div className="flex-1">
-          <p className="text-sm font-medium text-accent-red">
-            Download failed
+          <p className="text-sm font-semibold text-accent-orange">
+            Informasi Gangguan Layanan
           </p>
-          <p className="mt-1 text-sm text-body-mid">{message}</p>
+          <p className="mt-1 text-sm text-body-mid leading-relaxed">{message}</p>
         </div>
         <button
           onClick={onDismiss}

@@ -5,6 +5,7 @@ import Hero from "@/components/Hero";
 import PlatformTabs from "@/components/PlatformTabs";
 import UrlInput from "@/components/UrlInput";
 import ResultCard from "@/components/ResultCard";
+import ErrorMessage from "@/components/ErrorMessage";
 import Footer from "@/components/Footer";
 import type { Platform } from "@/lib/platforms";
 
@@ -38,6 +39,23 @@ export default function Home() {
   const [isConverting, setIsConverting] = useState(false);
   const [result, setResult] = useState<ResultData | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Helper to format friendly Indonesian error message
+  const getFriendlyErrorMessage = useCallback((platform: string) => {
+    const nameMap: Record<string, string> = {
+      spotify: "Spotify",
+      instagram: "Instagram",
+      tiktok: "TikTok",
+      youtube: "YouTube",
+    };
+    const platformName = nameMap[platform] || platform;
+    
+    if (platform === "youtube") {
+      return "Layanan download YouTube sedang mengalami gangguan teknis sementara dikarenakan pembatasan sistem pihak ketiga. Silakan coba beberapa saat lagi atau gunakan platform lain.";
+    }
+    
+    return `Maaf, layanan download ${platformName} sedang mengalami gangguan untuk sementara waktu. Silakan coba beberapa saat lagi.`;
+  }, []);
 
   const handlePlatformDetected = useCallback((platform: Platform) => {
     setActivePlatform(platform);
@@ -113,8 +131,8 @@ export default function Home() {
         throw new Error("Could not extract download link from conversion");
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Conversion failed";
-      setError(message);
+      const friendlyMessage = getFriendlyErrorMessage("spotify");
+      setError(friendlyMessage);
     } finally {
       setIsConverting(false);
     }
@@ -209,9 +227,8 @@ export default function Home() {
           break;
       }
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "An unexpected error occurred";
-      setError(message);
+      const friendlyMessage = getFriendlyErrorMessage(activePlatform);
+      setError(friendlyMessage);
     } finally {
       setIsLoading(false);
     }
@@ -241,7 +258,8 @@ export default function Home() {
           );
         }
       } catch {
-        setError("Failed to get download link");
+        const friendlyMessage = getFriendlyErrorMessage("youtube");
+        setError(friendlyMessage);
       } finally {
         setIsConverting(false);
       }
@@ -269,7 +287,13 @@ export default function Home() {
           isLoading={isLoading}
         />
 
-
+        {/* Friendly Error/Disturbance Notification */}
+        {error && (
+          <ErrorMessage
+            message={error}
+            onDismiss={() => setError(null)}
+          />
+        )}
 
         {/* Result */}
         {result && (
