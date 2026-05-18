@@ -63,7 +63,7 @@ export default function PlatformTabs({
   return (
     <div
       id="platform-tabs"
-      className="animate-fade-in-up mx-auto flex max-w-lg justify-center gap-2 rounded-md border border-hairline bg-canvas p-1.5 shadow-level2 md:gap-3"
+      className="animate-fade-in-up mx-auto flex w-[calc(100%-2rem)] sm:w-full max-w-md md:max-w-lg justify-center gap-2 rounded-md border border-hairline bg-canvas p-1.5 shadow-level2 md:gap-3"
       style={{ opacity: 0, animationDelay: "0.4s", animationFillMode: "forwards" }}
     >
       {PLATFORMS.map((platform) => {

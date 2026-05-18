@@ -5,7 +5,6 @@ import Hero from "@/components/Hero";
 import PlatformTabs from "@/components/PlatformTabs";
 import UrlInput from "@/components/UrlInput";
 import ResultCard from "@/components/ResultCard";
-import ErrorMessage from "@/components/ErrorMessage";
 import Footer from "@/components/Footer";
 import type { Platform } from "@/lib/platforms";
 
@@ -270,13 +269,7 @@ export default function Home() {
           isLoading={isLoading}
         />
 
-        {/* Error */}
-        {error && (
-          <ErrorMessage
-            message={error}
-            onDismiss={() => setError(null)}
-          />
-        )}
+
 
         {/* Result */}
         {result && (

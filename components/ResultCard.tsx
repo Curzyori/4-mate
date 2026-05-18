@@ -145,13 +145,13 @@ export default function ResultCard({
             )}
 
             {/* Actions */}
-            <div className="mt-4 flex items-center gap-3">
+            <div className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
               {downloadUrl ? (
                 <a
                   id="download-link"
                   href={`/api/proxy-download?url=${encodeURIComponent(downloadUrl)}&filename=${encodeURIComponent(`${title || platform}.${selectedFormat}`)}`}
                   download={`${title || platform}.${selectedFormat}`}
-                  className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 text-sm font-medium text-on-primary transition-all hover:opacity-90"
+                  className="inline-flex items-center justify-center gap-2 rounded-sm bg-primary px-5 py-2.5 text-sm font-medium text-on-primary transition-all hover:opacity-90 w-full sm:w-auto shrink-0"
                 >
                   <Download size={16} />
                   Download {selectedFormat.toUpperCase()}
@@ -161,7 +161,7 @@ export default function ResultCard({
                   id="convert-button"
                   onClick={() => onDownload(selectedFormat, selectedQuality)}
                   disabled={isConverting}
-                  className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 text-sm font-medium text-on-primary transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex items-center justify-center gap-2 rounded-sm bg-primary px-5 py-2.5 text-sm font-medium text-on-primary transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 w-full sm:w-auto shrink-0"
                 >
                   {isConverting ? (
                     <>
@@ -180,7 +180,7 @@ export default function ResultCard({
               <button
                 id="reset-button"
                 onClick={onReset}
-                className="rounded-sm border border-hairline px-4 py-2.5 text-sm font-medium text-mute transition-all hover:border-ink hover:text-ink"
+                className="inline-flex items-center justify-center rounded-sm border border-hairline px-4 py-2.5 text-sm font-medium text-mute transition-all hover:border-ink hover:text-ink w-full sm:w-auto shrink-0 text-center"
               >
                 New
               </button>
