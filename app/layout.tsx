@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: "4 Mate — Multi-Platform Media Downloader",
     description:
       "Download media from Spotify, Instagram, TikTok, and YouTube. Fast, free, and ad-free.",
-    url: "https://4mate.curzy.my.id",
+    url: "https://4-mate.curzy.dev",
     siteName: "4 Mate",
     type: "website",
   },

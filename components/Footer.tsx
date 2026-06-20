@@ -52,7 +52,7 @@ export default function Footer() {
           <span className="h-4 w-px bg-hairline" />
           <a
             id="footer-portfolio"
-            href="https://curzy.my.id/"
+            href="https://curzy.dev/"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-mute transition-all hover:text-ink"
