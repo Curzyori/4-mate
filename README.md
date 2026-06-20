@@ -1,86 +1,92 @@
-# 4 Mate — Multi-Platform Media Downloader 🇮🇩
+<p align="center">
+  <img src="public/logo.png" alt="4Mate Logo" width="120"/>
+</p>
 
-4 Mate is a simple web app to download video and audio from Spotify, Instagram, TikTok, and YouTube. Get your MP3 and MP4 files easily with high quality and zero annoying ads. Made by an Indonesian.
+<h1 align="center">4 Mate</h1>
+<p align="center">
+  <strong>Multi-Platform Media Downloader</strong>
+</p>
 
-## Problem
-Many users have to visit different websites (often full of spam or dangerous popup ads) just to download media from social platforms. Also, many downloaders only open the media in a new tab instead of actually downloading it to the device.
+<p align="center">
+  <a href="https://4-mate.curzy.dev/"><strong>🌐 Live Deploy</strong></a>
+</p>
 
-## Solution
-4 Mate provides one clean, ad-free platform with a smart auto-detect feature. We also use a server-side proxy with Edge Runtime to force the file to download directly to your device, without opening new tabs or breaking server memory.
+<div align="center">
 
-## Features
-- **Multi-Platform Support**: Download from Spotify, Instagram, TikTok, and YouTube.
-- **Smart Auto-Detect**: Just paste the link, and the app automatically switches to the correct platform.
-- **Quality Selection**: Supports MP3 & MP4 formats up to 1080p resolution (for YouTube).
-- **Direct Forced-Download**: Uses a special proxy to force downloads instantly (no more "open in new tab").
-- **Premium UI/UX**: Minimalist design inspired by Webflow with smooth animations.
-- **Ad-Free Experience**: Pure functionality without any popup ads.
+[![Stars](https://img.shields.io/github/stars/Curzyori/4-mate?style=for-the-badge&color=orange)](https://github.com/Curzyori/4-mate/stargazers)
+[![Forks](https://img.shields.io/github/forks/Curzyori/4-mate?style=for-the-badge&color=orange)](https://github.com/Curzyori/4-mate/network/members)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue?style=for-the-badge)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Web-black?style=for-the-badge)](#)
 
-## Demo
-Live demo: https://4mate.curzy.my.id
+</div>
 
-![4 Mate Dashboard 1](./public/dashboard-1.png)
-![4 Mate Dashboard 2](./public/dashboard-2.png)
+<p align="center">
+  <a href="#-why-4-mate">Why This</a> ·
+  <a href="#-key-features">Features</a> ·
+  <a href="#-supported-platforms">Platforms</a> ·
+  <a href="#-quick-start">Quick Start</a>
+</p>
 
-## Tech Stack
-- **React / Next.js 16 (App Router)** — to build dynamic UI and server-side API proxies.
-- **Tailwind CSS v4** — for fast and consistent styling using modern `@theme` architecture.
-- **Cheerio & Axios** — for web scraping and API handling (especially bypassing Instagram).
-- **y2mate-dl** — to handle YouTube downloads easily.
-- **Vercel Edge Runtime** — to stream large downloads without hitting serverless memory timeouts.
+---
 
-## Getting Started
+## 🕒 Why 4 Mate?
 
-### 1. Clone repository
+Many downloader sites are flooded with popup ads, malware redirects, and "open in new tab" tricks that never actually save the file. 4 Mate replaces that mess with one clean hub that pulls media straight to your device from Spotify, Instagram, YouTube, and TikTok.
+
+---
+
+## 🎯 Key Features
+
+| Feature | Status | Description |
+| :--- | :---: | :--- |
+| **Smart Auto-Detect** | ✅ | Paste a URL and the app picks the right platform handler automatically. |
+| **MP3 / MP4 Quality** | ✅ | Pick audio quality or video resolution up to 1080p. |
+| **Forced Download Proxy** | ✅ | Edge-runtime proxy streams the file directly so it saves, not opens. |
+| **Ad-Free UI** | ✅ | Minimalist Webflow-inspired layout with zero popup ads. |
+
+---
+
+## 🌐 Supported Platforms
+
+- 🎵 **Spotify** — Tracks and playlist audio
+- 📸 **Instagram** — Reels, posts, and stories
+- 🎥 **YouTube** — Videos up to 1080p
+- 🎭 **TikTok** — Watermark-free downloads
+
+---
+
+## 🛠 Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Styling:** Tailwind CSS v4
+- **Downloaders:** @distube/ytdl-core, y2mate-dl, cheerio
+- **HTTP Client:** Axios
+- **Icons:** Lucide React
+
+---
+
+## 🚀 Quick Start
+
+### Live Deploy
+Visit **[4-mate.curzy.dev](https://4-mate.curzy.dev/)** — no install required.
+
+### Local Development
+
 ```bash
-git clone https://github.com/Curzyori/4-Mate-7.git
-cd 4-Mate-7
-```
+# Clone the repository
+git clone https://github.com/Curzyori/4-mate.git
+cd 4-mate
 
-### 2. Install dependencies
-```bash
+# Install dependencies
 npm install
-```
 
-### 3. Setup environment variables
-Create a `.env.local` file (or copy from `.env.example`) and fill in the values:
-```env
-# Use Spotmate endpoint or a similar Spotify proxy
-SPOTIFY_API_URL=https://spotmate.online
-
-# Enter the TikTok downloader API endpoint
-TIKTOK_API_URL=https://www.tikwm.com/api/
-
-# Google Analytics ID (Optional)
-NEXT_PUBLIC_GA_ID=
-```
-*(Note: YouTube and Instagram are processed internally and do not need API URLs in `.env`)*
-
-### 4. Run local server
-```bash
+# Start dev server
 npm run dev
 ```
-Open `http://localhost:3000` in your browser.
 
-## Usage
-1. Open the app in your browser.
-2. Copy a video/audio link from Spotify, IG, TikTok, or YouTube.
-3. Paste the link into the search bar (platform is auto-detected).
-4. Choose your desired format and quality (MP3/MP4).
-5. Click **Download** and the file will save to your device directly.
+---
 
-## Configuration
-Do not commit your real `.env.local` secret values to GitHub. Make sure you only edit `.env.example` as a reference.
+## 📄 License
+This project is released under the **Apache License 2.0** — free for commercial and personal use, see [LICENSE](LICENSE) for full text.
 
-## Roadmap
-- Add support for Twitter / X and Facebook
-- Add download history feature (saved in LocalStorage)
-- Add Dark / Light theme mode
-
-## Donation ☕
-If you find this project helpful, consider buying me a coffee!
-- **EVM (ETH/BNB/Polygon)**: `0x54e18F0345a099D9FE6dd0576bb1699733c44735`
-- **BTC**: `bc1q7g5whvwjvrh7mtuap2tu7qh3tyyhvls36cp7fs`
-
-## License
-MIT
+<sub>Built with passion as the 7th Project of the 50 Projects Challenge by **@curzyori**</sub>

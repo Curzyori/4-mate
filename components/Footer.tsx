@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
-import { Globe } from "lucide-react";
+import { Coffee, Copy, Check, X } from "lucide-react";
 
 function GithubIcon({ size = 16, className }: { size?: number, className?: string }) {
   return (
@@ -11,65 +12,164 @@ function GithubIcon({ size = 16, className }: { size?: number, className?: strin
   );
 }
 
-export default function Footer() {
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <footer
-      id="footer"
-      className="mt-auto border-t border-hairline bg-canvas px-8 py-8"
+    <button
+      onClick={handleCopy}
+      className="flex items-center gap-1 rounded bg-hairline px-2 py-1 text-xs text-mute transition-all hover:text-ink"
     >
-      <div className="mx-auto flex max-w-4xl flex-col items-center gap-4 text-center">
-        {/* Logo */}
-        <div className="relative mb-2 h-8 w-8 overflow-hidden rounded-md grayscale transition-all hover:grayscale-0">
-          <Image
-            src="/logo.png"
-            alt="4 Mate Logo"
-            fill
-            className="object-contain"
-          />
-        </div>
+      {copied ? (
+        <>
+          <Check size={12} />
+          Copied
+        </>
+      ) : (
+        <>
+          <Copy size={12} />
+          Copy
+        </>
+      )}
+    </button>
+  );
+}
 
-        {/* Brand */}
-        <p className="text-sm font-medium text-body-mid">
-          Built by{" "}
-          <span className="font-semibold text-ink">Curzy</span>
-        </p>
+export default function Footer() {
+  const [showModal, setShowModal] = useState(false);
 
-        {/* Links */}
-        <div className="flex items-center gap-5">
-          <a
-            id="footer-github"
-            href="https://github.com/Curzyori"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-mute transition-all hover:text-ink"
-          >
-            <GithubIcon
-              size={16}
-              className="transition-transform group-hover:scale-110"
+  return (
+    <>
+      <footer
+        id="footer"
+        className="mt-auto border-t border-hairline bg-canvas px-8 py-8"
+      >
+        <div className="mx-auto flex max-w-4xl flex-col items-center gap-4 text-center">
+          {/* Logo */}
+          <div className="relative mb-2 h-8 w-8 overflow-hidden rounded-md grayscale transition-all hover:grayscale-0">
+            <Image
+              src="/logo.png"
+              alt="4 Mate Logo"
+              fill
+              className="object-contain"
             />
-            GitHub
-          </a>
-          <span className="h-4 w-px bg-hairline" />
-          <a
-            id="footer-portfolio"
-            href="https://curzy.dev/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-mute transition-all hover:text-ink"
-          >
-            <Globe
-              size={16}
-              className="transition-transform group-hover:scale-110"
-            />
-            Portfolio
-          </a>
-        </div>
+          </div>
 
-        {/* Copyright */}
-        <p className="text-xs text-mute-soft">
-          {`© ${new Date().getFullYear()} 4 Mate. Free & open for everyone.`}
-        </p>
-      </div>
-    </footer>
+          {/* Brand */}
+          <p className="text-sm font-medium text-body-mid">
+            Built by{" "}
+            <span className="font-semibold text-ink">Curzy</span>
+          </p>
+
+          {/* Links */}
+          <div className="flex items-center gap-5">
+            <a
+              id="footer-github"
+              href="https://github.com/Curzyori/4-mate"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-mute transition-all hover:text-ink"
+            >
+              <GithubIcon
+                size={16}
+                className="transition-transform group-hover:scale-110"
+              />
+              GitHub
+            </a>
+            <span className="h-4 w-px bg-hairline" />
+            <button
+              id="footer-coffee"
+              onClick={() => setShowModal(true)}
+              className="group flex items-center gap-2 rounded-sm px-3 py-2 text-sm text-mute transition-all hover:text-ink"
+            >
+              <Coffee
+                size={16}
+                className="transition-transform group-hover:scale-110"
+              />
+              Buy Coffee
+            </button>
+          </div>
+
+          {/* Copyright */}
+          <p className="text-xs text-mute-soft">
+            {`© ${new Date().getFullYear()} 4 Mate. Free & open for everyone.`}
+          </p>
+        </div>
+      </footer>
+
+      {/* Buy Coffee Modal */}
+      {showModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm"
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            className="relative w-full max-w-md rounded-lg border border-hairline bg-canvas p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute right-4 top-4 rounded-sm p-1 text-mute transition-all hover:text-ink"
+            >
+              <X size={18} />
+            </button>
+
+            {/* Header */}
+            <div className="mb-6 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10">
+                <Coffee size={20} className="text-amber-500" />
+              </div>
+              <div>
+                <h3 className="text-base font-semibold text-ink">
+                  Buy Me a Coffee
+                </h3>
+                <p className="text-xs text-mute">
+                  Support this project with crypto
+                </p>
+              </div>
+            </div>
+
+            {/* Addresses */}
+            <div className="space-y-4">
+              {/* EVM Address */}
+              <div className="rounded-md border border-hairline bg-[#f8f8f8] p-4">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-xs font-medium text-body-mid">
+                    EVM (ETH / BNB / Polygon)
+                  </span>
+                  <CopyButton text="0x54e18F0345a099D9FE6dd0576bb1699733c44735" />
+                </div>
+                <p className="break-all font-mono text-xs text-mute">
+                  0x54e18F0345a099D9FE6dd0576bb1699733c44735
+                </p>
+              </div>
+
+              {/* BTC Address */}
+              <div className="rounded-md border border-hairline bg-[#f8f8f8] p-4">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-xs font-medium text-body-mid">BTC</span>
+                  <CopyButton text="bc1q7g5whvwjvrh7mtuap2tu7qh3tyyhvls36cp7fs" />
+                </div>
+                <p className="break-all font-mono text-xs text-mute">
+                  bc1q7g5whvwjvrh7mtuap2tu7qh3tyyhvls36cp7fs
+                </p>
+              </div>
+            </div>
+
+            {/* Footer note */}
+            <p className="mt-4 text-center text-xs text-mute-soft">
+              Thank you for your support!
+            </p>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
