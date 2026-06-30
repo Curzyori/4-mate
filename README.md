@@ -33,10 +33,6 @@
 
 Many downloader sites are flooded with popup ads, malware redirects, and "open in new tab" tricks that never actually save the file. 4 Mate replaces that mess with one clean hub that pulls media straight to your device from Spotify, Instagram, YouTube, and TikTok.
 
----
-
-## 🎯 Key Features
-
 | Feature | Status | Description |
 | :--- | :---: | :--- |
 | **Smart Auto-Detect** | ✅ | Paste a URL and the app picks the right platform handler automatically. |
@@ -83,6 +79,18 @@ npm install
 # Start dev server
 npm run dev
 ```
+
+---
+
+## ☕ Support
+
+If this project is useful, consider supporting its development!
+
+<p align="center">
+  <a href="https://donate.curzy.dev/"><strong>💝 Donate via Crypto or QRIS</strong></a>
+</p>
+
+Crypto payment details are maintained at [donate.curzy.dev](https://donate.curzy.dev/).
 
 ---
 
